@@ -169,9 +169,6 @@ main (int argc, char const *argv[])
    */
   if (cmdflag && fflag)
     {
-      for (size_t i = 0; i < sizeof (cmdTable) / sizeof (struct cmd); i++)
-        if (cmdTable[i].name != NULL)
-          printf ("%s\n", cmdTable[i].name);
 
     }
 
@@ -198,6 +195,15 @@ main (int argc, char const *argv[])
         }
 
       tftp_extract_argv (commandHolder, &argc, &argv);
+
+      for (size_t i = 0; i < sizeof (cmdTable) / sizeof (struct cmd); i++)
+        {
+          if (cmdTable[i].name == NULL)
+            continue;
+
+          if (strcmp (cmdTable[i].name, argv[0]) == 0)
+            cmdTable[i].handler (argc, argv);
+        }
     }
 
   return EXIT_SUCCESS;

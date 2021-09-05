@@ -109,28 +109,28 @@ tftp_extract_argv (char *cmd, int *argc, char ***argv)
 {
   char *tmp;
 
-  int ac;
+  int cpArgc;
 
-  char **cp;
+  char **cpArgv;
 
   *argv = NULL;
 
-  cp = (char **)malloc3d (20, sizeof (char) * 15);
+  cpArgv = (char **)malloc3d (20, sizeof (char) * 15);
 
-  ac = 0;
+  cpArgc = 0;
 
-  cp[ac++] = strtok (cmd, " ");
+  cpArgv[cpArgc++] = strtok (cmd, " ");
   
   while ((tmp = strtok (NULL, " ")) != NULL)
   {
-    cp[ac++] = tmp;
+    cpArgv[cpArgc++] = tmp;
   }
 
-  cp[ac - 1][strlen(cp[ac - 1]) - 1] = '\0';
+  cpArgc--;
 
-  printf("%s\n", cp[ac - 1]);
+  cpArgv[cpArgc][strlen(cpArgv[cpArgc]) - 1] = '\0';
 
-  *argc = ac;
+  *argc = cpArgc;
 
-  *argv = cp;
+  *argv = cpArgv;
 }
