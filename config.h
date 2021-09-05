@@ -1,0 +1,5 @@
+#define HAVE_CONFIG     1
+
+#define DEFAULT_IP      "127.0.0.1"
+
+#define TFTP_PORT        69
