@@ -63,9 +63,35 @@ tftp_quit (int argc, char **argv)
 }
 
 void
+usage (char *name)
+{
+  int flag = 0;
+  for (size_t i = 0; i < N_CMDS; i++)
+    {
+      if (cmdTable[i].name != NULL && strcmp (name, cmdTable[i].name) == 0)
+        {
+          printf ("%s\t\t%s\n", cmdTable[i].name, cmdTable[i].help);
+          flag = 1;
+        }
+    }
+
+  if (!flag)
+    printf ("%s not found\n", name);
+}
+
+void
 tftp_help (int argc, char **argv)
 {
+  if (argc == 1)
+    {
+      for (size_t i = 1; i < N_CMDS; i++)
+        usage ((char *)cmdTable[i].name);
 
+      return;
+    }
+
+  for (size_t i = 1; i < argc; i++)
+    usage (argv[i]);
 }
 
 void
@@ -109,6 +135,8 @@ tftp_extract_argv (char *cmd, int *argc, char ***argv)
 {
   char *tmp;
 
+  char *ch;
+
   int cpArgc;
 
   char **cpArgv;
@@ -120,15 +148,18 @@ tftp_extract_argv (char *cmd, int *argc, char ***argv)
   cpArgc = 0;
 
   cpArgv[cpArgc++] = strtok (cmd, " ");
-  
+
   while ((tmp = strtok (NULL, " ")) != NULL)
-  {
     cpArgv[cpArgc++] = tmp;
-  }
 
-  cpArgc--;
+  ch = (char *)&cpArgv[cpArgc - 1][strlen (cpArgv[cpArgc - 1]) - 1];
 
-  cpArgv[cpArgc][strlen(cpArgv[cpArgc]) - 1] = '\0';
+  *ch = *ch == '\n' ? '\0' : *ch;
+
+  ch = (char *)&cpArgv[cpArgc - 1][0];
+
+  if (ch[0] == '\0')
+    cpArgc--;
 
   *argc = cpArgc;
 

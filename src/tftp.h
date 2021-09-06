@@ -17,6 +17,9 @@
 #define ACK               04
 #define ERROR             05
 
+/**/
+#define N_CMDS            sizeof(cmdTable) / sizeof(struct cmd) - 1
+
 /**
  * @brief tftp header
  *
@@ -130,8 +133,7 @@ static struct cmd cmdTable[] =
     .name = "status",
     .help = "show current status",
     .handler = tftp_status
-  },
-  {0, 0, 0}
+  }
 };
 
 void tftp_extract_argv (char *cmd, int *argc, char ***argv);
