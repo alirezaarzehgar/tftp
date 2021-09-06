@@ -35,10 +35,10 @@ valid_item (char *item, char **items)
   int flag = false;
 
   for (size_t i = 0; i <= sizeof (items) / sizeof (char *); i++)
-    {
-      if (strcmp (item, items[i]) == 0)
-        flag = true;
-    }
+  {
+    if (strcmp (item, items[i]) == 0)
+      flag = true;
+  }
 
   return flag;
 }

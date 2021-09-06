@@ -12,6 +12,7 @@
 
 #define MSG_MODE_FORMAT                     "mode : %s\n"
 #define MSG_CONNECTED_TO_FORMAT             "connected to %s\n"
+#define MSG_PORT_STATUS                     "port : %d\n"
 
 #define MSG_CURRENT_PERMISSION_DENIED       "current folder has not permission for creating new file\n"
 

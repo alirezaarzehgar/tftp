@@ -19,5 +19,5 @@ malloc3d (size_t nitem, size_t itemSize)
   for (size_t i = 0; i < nitem; i++)
     v3d[i] = (void *)malloc (itemSize);
 
-	return v3d;
+  return v3d;
 }

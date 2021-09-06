@@ -72,71 +72,71 @@ main (int argc, char const *argv[])
 
   /* parse arguments */
   while ((opt = getopt (argc, (char *const *) argv, "a:c:f:m:p:")) != -1)
+  {
+    switch (opt)
     {
-      switch (opt)
-        {
-        case 'a':
-          ipflag = 0;         /* When user set -a option we don't need to getting ip from prompt */
+    case 'a':
+      ipflag = 0;         /* When user set -a option we don't need to getting ip from prompt */
 
-          if (ip_validator (optarg))
-            strncpy (ip, optarg, MAXIPLEN);
-          else
-            {
-              fprintf (stderr, ERROR_INVALID_IP, optarg);
+      if (ip_validator (optarg))
+        strncpy (ip, optarg, MAXIPLEN);
+      else
+      {
+        fprintf (stderr, ERROR_INVALID_IP, optarg);
 #ifdef HAVE_CONFIG
-              strncpy (ip, DEFAULT_IP, MAXIPLEN);
+        strncpy (ip, DEFAULT_IP, MAXIPLEN);
 #else
-              strncpy (ip, "127.0.0.1", MAXIPLEN);
+        strncpy (ip, "127.0.0.1", MAXIPLEN);
 #endif // HAVE_CONFIG
-            }
+      }
 
-          break;
+      break;
 
-        case 'f':
-          if (filename_validator (command, optarg))
-            {
-              strncpy (filename, optarg, MAX_FILENAME_LEN);
-              fflag = 1;
-            }
-          else
-            perror (optarg);
+    case 'f':
+      if (filename_validator (command, optarg))
+      {
+        strncpy (filename, optarg, MAX_FILENAME_LEN);
+        fflag = 1;
+      }
+      else
+        perror (optarg);
 
-          break;
+      break;
 
-        case 'm':
-          if (mode_validator (optarg))
-            strncpy (mode, optarg, MAXMODELEN);
-          else
-            fprintf (stderr, ERROR_INVALID_MODE, optarg);
+    case 'm':
+      if (mode_validator (optarg))
+        strncpy (mode, optarg, MAXMODELEN);
+      else
+        fprintf (stderr, ERROR_INVALID_MODE, optarg);
 
-          break;
+      break;
 
-        case 'p':
-          if (port_validator (atoi (optarg)))
-            port = atoi (optarg);
-          else
-            fprintf (stderr, ERROR_INVALID_PORT, port);
+    case 'p':
+      if (port_validator (atoi (optarg)))
+        port = atoi (optarg);
+      else
+        fprintf (stderr, ERROR_INVALID_PORT, port);
 
-          break;
+      break;
 
-        case 'c':
-          if (cmd_validator (optarg))
-            {
-              strncpy (command, optarg, MAX_ARG_CMD_LEN);
-              cmdflag = 1;
-            }
-          else
-            {
-              fprintf (stderr, ERROR_INVALID_CMD, optarg);
-              exit (EXIT_FAILURE);
-            }
+    case 'c':
+      if (cmd_validator (optarg))
+      {
+        strncpy (command, optarg, MAX_ARG_CMD_LEN);
+        cmdflag = 1;
+      }
+      else
+      {
+        fprintf (stderr, ERROR_INVALID_CMD, optarg);
+        exit (EXIT_FAILURE);
+      }
 
-          break;
+      break;
 
-        default:
-          break;
-        }
+    default:
+      break;
     }
+  }
 
   /**
    * @brief If first ip char equal to '\0' means to ip doesn't set.
@@ -144,18 +144,18 @@ main (int argc, char const *argv[])
    *
    */
   if (ipflag)
+  {
+    while (!ip_validator (ip))
     {
-      while (!ip_validator (ip))
-        {
-          size_t ipLen = sizeof (ip);
+      size_t ipLen = sizeof (ip);
 
-          printf (PROMPT_GET_IP);
+      printf (PROMPT_GET_IP);
 
-          getline ((char **)&ip, &ipLen, stdin);
+      getline ((char **)&ip, &ipLen, stdin);
 
-          ip[strlen (ip) - 1] = '\0';
-        }
+      ip[strlen (ip) - 1] = '\0';
     }
+  }
 
   /* connect to ip and port after getting this stuffs */
   xtftp_sock_init (port, ip, mode);
@@ -167,53 +167,53 @@ main (int argc, char const *argv[])
    *
    */
   if (cmdflag && fflag)
-    {
+  {
 
-    }
+  }
 
   /**
    * @brief main loop for executing command
    *
    */
   while (1)
+  {
+    int argc;
+
+    char **argv;
+
+    bool notfound = 1;
+
+    commandHolderLen = sizeof (commandHolder);
+
+    printf (PROMPT);
+
+    getline (&commandHolder, &commandHolderLen, stdin);
+
+    if (commandHolderLen > MAX_USER_CMD_LEN)
     {
-      int argc;
+      fprintf (stderr, "command is too long\n");
 
-      char **argv;
-
-      bool notfound = 1;
-
-      commandHolderLen = sizeof (commandHolder);
-
-      printf (PROMPT);
-
-      getline (&commandHolder, &commandHolderLen, stdin);
-
-      if (commandHolderLen > MAX_USER_CMD_LEN)
-        {
-          fprintf (stderr, "command is too long\n");
-
-          continue;
-        }
-
-      tftp_extract_argv (commandHolder, &argc, &argv);
-
-      for (size_t i = 0; i < sizeof (cmdTable) / sizeof (struct cmd); i++)
-        {
-          if (cmdTable[i].name == NULL)
-            continue;
-
-          if (strcmp (cmdTable[i].name, argv[0]) == 0)
-            {
-              cmdTable[i].handler (argc, argv);
-
-              notfound = !notfound;
-            }
-        }
-
-      if (notfound)
-        printf (MSG_NOTFOUND);
+      continue;
     }
+
+    tftp_extract_argv (commandHolder, &argc, &argv);
+
+    for (size_t i = 0; i < sizeof (cmdTable) / sizeof (struct cmd); i++)
+    {
+      if (cmdTable[i].name == NULL)
+        continue;
+
+      if (strcmp (cmdTable[i].name, argv[0]) == 0)
+      {
+        cmdTable[i].handler (argc, argv);
+
+        notfound = !notfound;
+      }
+    }
+
+    if (notfound)
+      printf (MSG_NOTFOUND);
+  }
 
   return EXIT_SUCCESS;
 }

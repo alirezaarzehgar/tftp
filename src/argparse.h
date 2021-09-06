@@ -36,8 +36,8 @@ bool filename_validator (char *cmd, char *filename);
 
 bool mode_validator (char *mode);
 
-bool port_validator(int port);
+bool port_validator (int port);
 
-bool cmd_validator(char *cmd);
+bool cmd_validator (char *cmd);
 
 #endif // ARGPARSE_H

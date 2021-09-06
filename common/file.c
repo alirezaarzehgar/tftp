@@ -16,5 +16,5 @@
 bool
 current_folder_waccess()
 {
-    return (bool)!access(CURRENT_FOLDER, W_OK);
+  return (bool)!access (CURRENT_FOLDER, W_OK);
 }
