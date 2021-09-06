@@ -22,7 +22,7 @@ static tftp_socket_t *global_tst;
  *
  * @param port
  * @param ip
- * @return tftp_socket_t*
+ * @return int
  */
 int
 tftp_sock_init (int port, const char *ip, char *mode)
@@ -85,14 +85,16 @@ usage (char *name)
     printf ("%s not found\n", name);
 }
 
-void
+bool
 argument_error (int argc, int allowed)
 {
   if (argc != allowed && allowed != -1)
     {
       fprintf (stderr, MSG_WRONG_USAGE);
-      return;
+      return true;
     }
+
+  return false;
 }
 
 /* user interface commands */
@@ -139,16 +141,16 @@ tftp_status (int argc, char **argv)
 {
   if (global_tst == NULL || global_tst->empty != false)
     {
-      fprintf (stderr, "connection has not been initialized.\n");
+      fprintf (stderr, MSG_CONNECTION_INIT_ERR);
       exit (EXIT_FAILURE);
     }
 
   char *ip = inet_ntoa (global_tst->saddr.sin_addr);
 
-  printf ("connected to %s.\n", ip != NULL ? ip : "undefined");
+  printf (MSG_CONNECTED_TO_FORMAT, ip != NULL ? ip : MSG_UNDEFINED);
 
-  printf ("mode : %s\n", mode_validator (global_tst->mode) ? global_tst->mode :
-          "undefined");
+  printf (MSG_MODE_FORMAT, mode_validator (global_tst->mode) ? global_tst->mode :
+          MSG_UNDEFINED);
 }
 
 void
@@ -170,7 +172,16 @@ tftp_setascii (int argc, char **argv)
 void
 tftp_connect (int argc, char **argv)
 {
-  argument_error (argc, 1);
+  if (argument_error (argc, 2))
+    return;
+
+  if (global_tst == NULL)
+    global_tst = malloc (sizeof (tftp_socket_t));
+
+  if (ip_validator (argv[1]))
+    global_tst->saddr.sin_addr.s_addr = inet_addr (argv[1]);
+  else
+    fprintf (stderr, MSG_INVALID_IP, argv[1]);
 }
 
 void
