@@ -15,6 +15,7 @@
 #include "argparse.h"
 #include "config.h"
 #include <signal.h>
+#include "messages.h"
 
 #define PROMPT_GET_IP   "(to) "
 #define PROMPT          "tftp> "
@@ -182,6 +183,8 @@ main (int argc, char const *argv[])
 
       char **argv;
 
+      bool notfound = 1;
+
       commandHolderLen = sizeof (commandHolder);
 
       printf (PROMPT);
@@ -191,6 +194,7 @@ main (int argc, char const *argv[])
       if (commandHolderLen > MAX_USER_CMD_LEN)
         {
           fprintf (stderr, "command is too long\n");
+
           continue;
         }
 
@@ -202,8 +206,15 @@ main (int argc, char const *argv[])
             continue;
 
           if (strcmp (cmdTable[i].name, argv[0]) == 0)
-            cmdTable[i].handler (argc, argv);
+            {
+              cmdTable[i].handler (argc, argv);
+
+              notfound = !notfound;
+            }
         }
+
+      if (notfound)
+        printf (MSG_NOTFOUND);
     }
 
   return EXIT_SUCCESS;

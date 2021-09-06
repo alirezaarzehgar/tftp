@@ -2,5 +2,6 @@
 #define MESSAGES_H
 
 #define GOODBYE_MSG             "goodbye :)\n"
+#define MSG_NOTFOUND            "command not found\n"
 
 #endif // MESSAGES_H
