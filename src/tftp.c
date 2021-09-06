@@ -114,7 +114,7 @@ tftp_help (int argc, char **argv)
 {
   if (argc == 1)
     {
-      for (size_t i = 1; i < N_CMDS; i++)
+      for (size_t i = 0; i < N_CMDS; i++)
         usage ((char *)cmdTable[i].name);
 
       return;
