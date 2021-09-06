@@ -89,6 +89,8 @@ void tftp_setascii (int argc, char **argv);
 
 void tftp_connect (int argc, char **argv);
 
+void tftp_nothing(int argc, char **argv);
+
 /* command table */
 
 static struct cmd cmdTable[] =
@@ -137,7 +139,8 @@ static struct cmd cmdTable[] =
     .name = "status",
     .help = "show current status",
     .handler = tftp_status
-  }
+  },
+  {"", "", tftp_nothing}
 };
 
 void tftp_extract_argv (char *cmd, int *argc, char ***argv);

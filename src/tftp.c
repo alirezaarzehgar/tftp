@@ -60,12 +60,6 @@ tftp_sock_init (int port, const char *ip, char *mode)
 void
 set_mode (int argc, char *mode)
 {
-  if (argc != 1)
-    {
-      fprintf (stderr, MSG_WRONG_USAGE);
-      return;
-    }
-
   if (global_tst == NULL)
     global_tst = malloc (sizeof (tftp_socket_t));
 
@@ -91,13 +85,23 @@ usage (char *name)
     printf ("%s not found\n", name);
 }
 
+void
+argument_error (int argc, int allowed)
+{
+  if (argc != allowed && allowed != -1)
+    {
+      fprintf (stderr, MSG_WRONG_USAGE);
+      return;
+    }
+}
+
 /* user interface commands */
 
 void
 tftp_quit (int argc, char **argv)
 {
   (void)argc;
-  (void)argv;
+  (void)argv;     /* Quit unused compier warning */
 
   printf (GOODBYE_MSG);
   exit (EXIT_SUCCESS);
@@ -150,19 +154,23 @@ tftp_status (int argc, char **argv)
 void
 tftp_setbinary (int argc, char **argv)
 {
+  argument_error (argc, 1);
+
   set_mode (argc, "octet");
 }
 
 void
 tftp_setascii (int argc, char **argv)
 {
+  argument_error (argc, 1);
+
   set_mode (argc, "netascii");
 }
 
 void
 tftp_connect (int argc, char **argv)
 {
-
+  argument_error (argc, 1);
 }
 
 void
@@ -199,4 +207,11 @@ tftp_extract_argv (char *cmd, int *argc, char ***argv)
   *argc = cpArgc;
 
   *argv = cpArgv;
+}
+
+void
+tftp_nothing (int argc, char **argv)
+{
+  (void)argc;
+  (void)argv;   /* Quit unused compier warning */
 }
