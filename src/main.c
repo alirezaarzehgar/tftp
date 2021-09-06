@@ -15,7 +15,7 @@
 #include "argparse.h"
 #include "config.h"
 #include <signal.h>
-#include "messages.h"
+#include "common/messages.h"
 
 #define PROMPT_GET_IP   "(to) "
 #define PROMPT          "tftp> "

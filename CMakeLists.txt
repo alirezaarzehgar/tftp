@@ -7,6 +7,7 @@ include_directories(.)
 configure_file(config.h.in ../config.h)
 
 add_executable(tftp
+    common/file.c
     common/malloc3d.c
     src/argparse.c
     src/tftp.c
