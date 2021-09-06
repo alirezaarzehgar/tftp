@@ -50,21 +50,28 @@ tftp_sock_init (int port, const char *ip, char *mode)
   /* set default mode */
   global_tst->empty = false;
 
-  strncpy(global_tst->mode, mode, MAXMODELEN);
+  strncpy (global_tst->mode, mode, MAXMODELEN);
 
   return 0;
 }
 
-/* user interface commands */
+/* helpers */
 
 void
-tftp_quit (int argc, char **argv)
+set_mode (int argc, char *mode)
 {
-  (void)argc;
-  (void)argv;
+  if (argc != 1)
+    {
+      fprintf (stderr, MSG_WRONG_USAGE);
+      return;
+    }
 
-  printf (GOODBYE_MSG);
-  exit (EXIT_SUCCESS);
+  if (global_tst == NULL)
+    global_tst = malloc (sizeof (tftp_socket_t));
+
+
+  if (mode_validator (mode))
+    strncpy (global_tst->mode, mode, MAXMODELEN);
 }
 
 void
@@ -82,6 +89,18 @@ usage (char *name)
 
   if (!flag)
     printf ("%s not found\n", name);
+}
+
+/* user interface commands */
+
+void
+tftp_quit (int argc, char **argv)
+{
+  (void)argc;
+  (void)argv;
+
+  printf (GOODBYE_MSG);
+  exit (EXIT_SUCCESS);
 }
 
 void
@@ -131,13 +150,13 @@ tftp_status (int argc, char **argv)
 void
 tftp_setbinary (int argc, char **argv)
 {
-
+  set_mode (argc, "octet");
 }
 
 void
 tftp_setascii (int argc, char **argv)
 {
-
+  set_mode (argc, "netascii");
 }
 
 void
