@@ -44,11 +44,15 @@ struct  tftphdr
 } __attribute__ ((__packed__));
 struct tftp_socket
 {
+  bool empty;
+  
   int fd;
 
   struct sockaddr_in saddr;
 
   socklen_t saddrLen;
+
+  char mode[MAXMODELEN];
 };
 
 struct cmd
@@ -64,7 +68,7 @@ typedef struct tftphdr tftphdr_t;
 
 typedef struct tftp_socket tftp_socket_t;
 
-tftp_socket_t *tftp_sock_init (int port, const char *ip);
+int tftp_sock_init (int port, const char *ip, char *mode);
 
 
 /* commands */

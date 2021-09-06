@@ -30,8 +30,6 @@
 int
 main (int argc, char const *argv[])
 {
-  tftp_socket_t *tst;
-
   char *ip;
 
 #ifdef TFTP_PORT
@@ -157,10 +155,10 @@ main (int argc, char const *argv[])
 
           ip[strlen (ip) - 1] = '\0';
         }
-
-      /* connect to ip and port after getting this stuffs */
-      tst = xtftp_sock_init (port, ip);
     }
+
+  /* connect to ip and port after getting this stuffs */
+  xtftp_sock_init (port, ip, mode);
 
   /**
    * @brief If -c option set we should just execute that command

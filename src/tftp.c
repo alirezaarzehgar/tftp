@@ -13,7 +13,9 @@
 #include "tftp.h"
 #include "messages.h"
 #include "common/malloc3d.h"
+#include "argparse.h"
 
+static tftp_socket_t *global_tst;
 
 /**
  * @brief initialize a socket for tftp connections
@@ -22,32 +24,35 @@
  * @param ip
  * @return tftp_socket_t*
  */
-tftp_socket_t *
-tftp_sock_init (int port, const char *ip)
+int
+tftp_sock_init (int port, const char *ip, char *mode)
 {
-  tftp_socket_t *tst;
-
   int retval;
 
-  tst = malloc (sizeof (tftp_socket_t));
+  global_tst = malloc (sizeof (tftp_socket_t));
 
   /* create socket */
 
-  tst->fd = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  global_tst->fd = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
-  if (tst->fd == -1)
-    return NULL;
+  if (global_tst->fd == -1)
+    return -1;
 
   /* binding */
-  tst->saddr.sin_family = AF_INET;
+  global_tst->saddr.sin_family = AF_INET;
 
-  tst->saddr.sin_port = htons (port);
+  global_tst->saddr.sin_port = htons (port);
 
-  tst->saddr.sin_addr.s_addr = inet_addr (ip);
+  global_tst->saddr.sin_addr.s_addr = inet_addr (ip);
 
-  tst->saddrLen = sizeof (tst->saddr);
+  global_tst->saddrLen = sizeof (global_tst->saddr);
 
-  return tst;
+  /* set default mode */
+  global_tst->empty = false;
+
+  strncpy(global_tst->mode, mode, MAXMODELEN);
+
+  return 0;
 }
 
 /* user interface commands */
@@ -109,7 +114,18 @@ tftp_get (int argc, char **argv)
 void
 tftp_status (int argc, char **argv)
 {
+  if (global_tst == NULL || global_tst->empty != false)
+    {
+      fprintf (stderr, "connection has not been initialized.\n");
+      exit (EXIT_FAILURE);
+    }
 
+  char *ip = inet_ntoa (global_tst->saddr.sin_addr);
+
+  printf ("connected to %s.\n", ip != NULL ? ip : "undefined");
+
+  printf ("mode : %s\n", mode_validator (global_tst->mode) ? global_tst->mode :
+          "undefined");
 }
 
 void
