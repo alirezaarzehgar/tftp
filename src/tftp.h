@@ -134,7 +134,7 @@ static struct cmd cmdTable[] =
   },
   {
     .name = "help",
-    .help = "print help information",
+    .help = "get help",
     .handler = tftp_help
   },
   {
