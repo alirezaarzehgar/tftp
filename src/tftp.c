@@ -58,6 +58,25 @@ tftp_sock_init (int port, const char *ip, char *mode)
   return 0;
 }
 
+void
+tftp_sock_close()
+{
+  close (global_tst->fd);
+
+  bzero (buf, BUFSIZ);
+
+  global_tst->empty = true;
+}
+
+void
+tftp_sock_restart (int port)
+{
+  tftp_sock_close();
+
+  tftp_sock_init (port, inet_ntoa (global_tst->saddr.sin_addr),
+                  global_tst->mode);
+}
+
 /* helpers */
 
 void
@@ -178,11 +197,31 @@ tftp_get (int argc, char **argv)
 
   int tst_block;
 
+  char *filename;
+
+  int port;
+
+  int firsttrap;
+
   tst = (tftphdr_t *)buf;
+
+  port = ntohs (global_tst->saddr.sin_port);
+
+  if (global_tst->empty)
+  {
+    tftp_sock_init (port, inet_ntoa (global_tst->saddr.sin_addr),
+                    global_tst->mode);
+
+    printf ("reinit\n");
+  }
+
+
+  if (argument_error (argc, 2))
+    return;
 
   size = 0;
 
-  block = 0;
+  block = 1;
 
   mode = global_tst->mode;
 
@@ -192,22 +231,30 @@ tftp_get (int argc, char **argv)
 
   tst_block = 0;
 
-  if (argument_error (argc, 2))
-    return;
+  filename = argv[1];
+
+  firsttrap = 1;
 
   if (!current_folder_waccess())
     fprintf (stderr, MSG_CURRENT_PERMISSION_DENIED);
 
   do
   {
-    if (block == 0)
-      size = make_request (RRQ, tst, argv[1], mode);
+    if (firsttrap)
+    {
+      size = make_request (RRQ, tst, filename, mode);
+      firsttrap = 0;
+    }
     else
     {
       tst->th_opcode = htons ((u_short) ACK);
+
       tst->th_block = htons ((u_short)block);
 
-      size = sizeof (tftphdr_t);
+      /* clear previos data */
+      memset (tst->th_data, 0, SEGMENT_SIZE);
+
+      size = 4;
 
       block++;
     }
@@ -229,17 +276,34 @@ tftp_get (int argc, char **argv)
 
       tst_opcode = ntohs (tst->th_opcode);
 
-      tst_block = htons (tst->th_block);
+      tst_block = ntohs (tst->th_block);
 
-      if (tst_opcode == DATA)
-      {
-        printf ("%s\n", tst->th_data);
-
+      if (tst_opcode == DATA && block == tst_block)
         break;
+
+      if (tst_opcode == ERROR)
+      {
+        fprintf (stderr, "Error in reciving data error code : %d\n", tst_opcode);
+
+        tftp_sock_restart (port);
+
+        return;
       }
     }
+
+    size = strlen (tst->th_data);
+
+    printf ("%s", tst->th_data);
   }
   while (size == SEGMENT_SIZE);
+
+  tst->th_opcode = htons ((u_short) ACK);
+  tst->th_block = htons ((u_short) block);
+
+  sendto (global_tst->fd, buf, 4, 0, (struct sockaddr *)&global_tst->saddr,
+          global_tst->saddrLen);
+
+  tftp_sock_restart (port);
 }
 
 void

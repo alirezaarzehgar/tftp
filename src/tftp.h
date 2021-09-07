@@ -18,7 +18,7 @@
 #define ERROR             05
 
 #define SEGMENT_SIZE      512
-#define PACKET_SIZE       SEGMENT_SIZE+sizeof(tftphdr_t)
+#define PACKET_SIZE       SEGMENT_SIZE+4
 
 #define th_block  th_u1.th_u2.th_u3.tu_block
 #define th_code   th_u1.th_u2.th_u3.tu_code
@@ -79,6 +79,9 @@ typedef struct tftp_socket tftp_socket_t;
 
 int tftp_sock_init (int port, const char *ip, char *mode);
 
+void tftp_sock_close();
+
+void tftp_sock_restart (int port);
 
 /* commands */
 
