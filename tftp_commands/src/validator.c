@@ -9,9 +9,7 @@
  *
  */
 
-#include "common/common.h"
-#include "tftp.h"
-#include "argparse.h"
+#include "tftp_commands/validator.h"
 
 bool
 ip_validator (char *ip)

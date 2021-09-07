@@ -9,7 +9,7 @@
  *
  */
 
-#include "file.h"
+#include "tftp_commands/file.h"
 
 #define CURRENT_FOLDER "."
 

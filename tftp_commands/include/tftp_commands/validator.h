@@ -1,11 +1,21 @@
-#if !defined(ARGPARSE_H)
-#define ARGPARSE_H
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <stdbool.h>
 #include <string.h>
 
-#define ERROR_INVALID_IP   "invalid ipv4 %s\n" \
-                            "use default ipv4 " DEFAULT_IP ", "
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#if !defined(ARGPARSE_H)
+#define ARGPARSE_H
+
+#define MAX_PORT_NUMBER   65535
+
+#define ERROR_INVALID_IP   "invalid ipv4 %s\n"
+
 #define ERROR_INVALID_MODE  "%s is invalid mode\n"
 
 #define ERROR_INVALID_PORT  "invalid port number : %d, use default port number\n"

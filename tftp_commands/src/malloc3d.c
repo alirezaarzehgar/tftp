@@ -9,7 +9,7 @@
  *
  */
 
-#include "malloc3d.h"
+#include "tftp_commands/malloc3d.h"
 
 void **
 malloc3d (size_t nitem, size_t itemSize)

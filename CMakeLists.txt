@@ -1,15 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(tftp)
+project(main)
 
-include_directories(.)
+configure_file(config.h.in ../tftp/include/config.h)
 
-configure_file(config.h.in ../config.h)
-
-add_executable(tftp
-    common/file.c
-    common/malloc3d.c
-    src/argparse.c
-    src/tftp.c
-    src/main.c
-)
+add_subdirectory(tftp_commands)
+add_subdirectory(tftp)

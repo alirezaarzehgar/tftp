@@ -1,7 +1,7 @@
 #if !defined(ERROR_HANDLING_H)
 #define ERROR_HANDLING_H
 
-#include "tftp.h"
+#include "tftp_commands/tftp_sock_init.h"
 
 /**
  * @brief helper function for handle `tftp_sock_init` errors

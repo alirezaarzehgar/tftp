@@ -9,16 +9,7 @@
  *
  */
 
-#include "common/common.h"
-#include "tftp.h"
-#include "error_handling.h"
-#include "argparse.h"
-#include "config.h"
-#include <signal.h>
-#include "common/messages.h"
-
-#define PROMPT_GET_IP   "(to) "
-#define PROMPT          "tftp> "
+#include "main.h"
 
 /**
  * @brief endpoint
