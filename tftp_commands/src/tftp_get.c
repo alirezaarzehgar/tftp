@@ -104,7 +104,10 @@ tftp_get (int argc, char **argv)
     retval = sendto (global_tst->fd, buf, size, 0,
                      (struct sockaddr *)&global_tst->saddr, global_tst->saddrLen);
     if (retval != size)
-      return perror ("tftp : sendto");
+    {
+      nak (errno + 100, NULL);
+      break;
+    }
 
     /* repeat giving data packet until packet is not standard */
     while (1)

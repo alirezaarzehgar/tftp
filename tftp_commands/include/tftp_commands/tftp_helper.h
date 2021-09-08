@@ -14,4 +14,6 @@ void tftp_extract_argv (char *cmd, int *argc, char ***argv);
 
 void tftp_nothing (int argc, char **argv);
 
+void nak(int error, const char *msg);
+
 #endif // TFTP_HELPER_H

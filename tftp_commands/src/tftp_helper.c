@@ -11,6 +11,10 @@
 
 #include "tftp_commands/tftp_helper.h"
 
+extern tftp_socket_t
+*global_tst;     /* global tftp socket strcuture for connection info */
+extern char buf[BUFSIZ];              /* buffer for holding packet contents */
+
 bool
 argument_error (int argc, int allowed)
 {
@@ -94,3 +98,28 @@ tftp_nothing (int argc, char **argv)
   (void)argv;   /* Quit unused compier warning */
 }
 
+void
+nak (int error, const char *msg)
+{
+  tftphdr_t *tst;
+
+  int len;
+
+  tst = (tftphdr_t *)buf;
+
+  tst->th_opcode = htons ((u_short)ERROR);
+
+  tst->th_code = htonl ((u_short) error);
+
+  if (msg)
+  {
+    len = strlen (msg) + 1;
+
+    memcpy (tst->th_msg, msg, len);
+    len += 4;     /* Add space for header */
+  }
+
+  if (sendto (global_tst->fd, buf, len, 0, (struct sockaddr *)&global_tst->saddr,
+              global_tst->saddrLen))
+    perror ("nak");
+}

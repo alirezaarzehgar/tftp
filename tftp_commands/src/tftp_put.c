@@ -103,7 +103,10 @@ tftp_put (int argc, char **argv)
     retval = sendto (global_tst->fd, buf, size + 4, 0,
                      (struct sockaddr *)&global_tst->saddr, global_tst->saddrLen);
     if (retval < 0)
-      perror ("sendto : error");
+    {
+      nak (errno + 100, NULL);
+      break;
+    }
 
     while (1)
     {
@@ -124,6 +127,9 @@ tftp_put (int argc, char **argv)
       if (hdr_opcode == ERROR)
       {
         fprintf (stderr, "%s : %s\n", filename, tst->th_msg);
+
+        tftp_sock_restart (port);
+
         return;
       }
     }
