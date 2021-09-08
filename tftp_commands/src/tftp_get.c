@@ -18,6 +18,9 @@ extern char buf[BUFSIZ];              /* buffer for holding packet contents */
 void
 tftp_get (int argc, char **argv)
 {
+  if (argument_error (argc, 2))
+    return;
+
   tftphdr_t *tst;
 
   int size;
@@ -51,10 +54,6 @@ tftp_get (int argc, char **argv)
 
     printf ("reinit\n");
   }
-
-
-  if (argument_error (argc, 2))
-    return;
 
   size = 0;
 
