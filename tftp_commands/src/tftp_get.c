@@ -43,6 +43,8 @@ tftp_get (int argc, char **argv)
 
   int firsttrap;
 
+  int n;
+
   tst = (tftphdr_t *)buf;
 
   port = ntohs (global_tst->saddr.sin_port);
@@ -75,7 +77,7 @@ tftp_get (int argc, char **argv)
     fprintf (stderr, MSG_CURRENT_PERMISSION_DENIED);
 
 #ifndef DEBUG
-  fd = open (filename, O_RDWR | O_CREAT | O_SYNC | O_TRUNC, 0644);
+  fd = open (filename, O_RDWR | O_CREAT | O_ASYNC | O_TRUNC, 0644);
 #endif
 
   do
@@ -109,10 +111,10 @@ tftp_get (int argc, char **argv)
     {
       do
       {
-        size = recvfrom (global_tst->fd, buf, PACKET_SIZE, 0,
-                         (struct sockaddr *)&global_tst->saddr, &global_tst->saddrLen);
+        n = recvfrom (global_tst->fd, buf, PACKET_SIZE, 0,
+                      (struct sockaddr *)&global_tst->saddr, &global_tst->saddrLen);
       }
-      while (size <= 0);
+      while (n <= 0);
 
       tst_opcode = ntohs (tst->th_opcode);
 
@@ -135,7 +137,7 @@ tftp_get (int argc, char **argv)
     printf ("%s", tst->th_data);
     size = strlen (tst->th_data);
 #else
-    size = write (fd, tst->th_data, strlen (tst->th_data));
+    size = write (fd, tst->th_data, n - 4);
 #endif
   }
   while (size == SEGMENT_SIZE);
