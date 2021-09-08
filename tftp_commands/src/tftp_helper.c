@@ -23,8 +23,6 @@ argument_error (int argc, int allowed)
   return false;
 }
 
-/* user interface commands */
-
 int
 make_request (int opcode, tftphdr_t *hdr, char *filename, char *mode)
 {
@@ -95,3 +93,4 @@ tftp_nothing (int argc, char **argv)
   (void)argc;
   (void)argv;   /* Quit unused compier warning */
 }
+
