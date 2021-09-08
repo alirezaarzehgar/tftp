@@ -1,4 +1,4 @@
-project(bin)
+project(tftp)
 
 include_directories(include)
 
