@@ -24,7 +24,7 @@ ip_validator (char *ip)
 bool
 filename_validator (char *cmd, char *filename)
 {
-  return strcmp (cmd, "put") == 0 || access (filename, F_OK) == 0;
+  return strcmp (cmd, "get") == 0 || access (filename, F_OK) == 0;
 }
 
 static inline bool

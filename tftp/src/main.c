@@ -41,7 +41,7 @@ main (int argc, char const *argv[])
 
   size_t commandHolderLen;
 
-  int ipflag = 1;         /* ip flag is on for getting from prompt */
+  int ipflag = 0;
 
   int cmdflag = 0;        /* cmd flag is off for getting from prompt */
   /* if cmdflag == 1 means to executing externcal command argument */
@@ -67,7 +67,7 @@ main (int argc, char const *argv[])
     switch (opt)
     {
     case 'a':
-      ipflag = 0;         /* When user set -a option we don't need to getting ip from prompt */
+      ipflag = 1;
 
       if (ip_validator (optarg))
         strncpy (ip, optarg, MAXIPLEN);
@@ -134,7 +134,7 @@ main (int argc, char const *argv[])
    * We should get server ip from user
    *
    */
-  if (ipflag)
+  if (!ipflag)
   {
     while (!ip_validator (ip))
     {
@@ -146,6 +146,8 @@ main (int argc, char const *argv[])
 
       ip[strlen (ip) - 1] = '\0';
     }
+
+    ipflag = 1;
   }
 
   /* connect to ip and port after getting this stuffs */
@@ -157,9 +159,22 @@ main (int argc, char const *argv[])
    * means to command is set
    *
    */
-  if (cmdflag && fflag)
+  if (cmdflag)
   {
+    char *argv[] = {command, filename};
 
+    if (!fflag || !ipflag)
+      fprintf (stderr, MSG_INCOMPLETE_FLAG);
+
+    for (size_t i = 0; i < sizeof (cmdTable) / sizeof (struct cmd); i++)
+    {
+      if (cmdTable[i].name == NULL)
+        continue;
+
+      if (strcmp (cmdTable[i].name, command) == 0)
+        cmdTable[i].handler (2, argv);
+    }
+    return EXIT_SUCCESS;
   }
 
   /**

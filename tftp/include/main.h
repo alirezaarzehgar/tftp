@@ -12,6 +12,8 @@
 #include "tftp_commands/validator.h"
 #include "tftp_commands/tftp_cmdtbl.h"
 
+#include "messages.h"
+
 #if !defined(MAIN_H)
 #define MAIN_H
 
