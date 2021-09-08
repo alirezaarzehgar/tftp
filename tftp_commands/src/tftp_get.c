@@ -125,7 +125,7 @@ tftp_get (int argc, char **argv)
 
       if (tst_opcode == ERROR)
       {
-        fprintf (stderr, "Error in reciving data error code : %d\n", tst_opcode);
+        fprintf (stderr, "%s : %s\n", filename, tst->th_msg);
 
         tftp_sock_restart (port);
 

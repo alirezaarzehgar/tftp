@@ -122,7 +122,10 @@ tftp_put (int argc, char **argv)
         break;
 
       if (hdr_opcode == ERROR)
-        fprintf (stderr, "error : %d\n", tst->th_code);
+      {
+        fprintf (stderr, "%s : %s\n", filename, tst->th_msg);
+        return;
+      }
     }
 
     block++;
