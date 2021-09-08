@@ -34,6 +34,8 @@ tftp_get (int argc, char **argv)
 
   char *filename;
 
+  int fd;
+
   int port;
 
   int firsttrap;
@@ -72,6 +74,10 @@ tftp_get (int argc, char **argv)
 
   if (!current_folder_waccess())
     fprintf (stderr, MSG_CURRENT_PERMISSION_DENIED);
+
+#ifndef DEBUG
+  fd = open (filename, O_RDWR | O_CREAT | O_SYNC | O_TRUNC, 0644);
+#endif
 
   do
   {
@@ -126,9 +132,12 @@ tftp_get (int argc, char **argv)
       }
     }
 
-    size = strlen (tst->th_data);
-
+#ifdef DEBUG
     printf ("%s", tst->th_data);
+    size = strlen (tst->th_data);
+#else
+    size = write (fd, tst->th_data, strlen (tst->th_data));
+#endif
   }
   while (size == SEGMENT_SIZE);
 
