@@ -8,6 +8,7 @@
 #include <errno.h>
 
 #include "xvalidator.h"
+#include "tftpd_commands/tftp_sock_init.h"
 
 #if !defined(TFTPD_MAIN_H)
 #define TFTPD_MAIN_H

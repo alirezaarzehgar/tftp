@@ -10,6 +10,7 @@
  */
 
 #include "main.h"
+#include "tftpd_commands/shared_objects.h"
 
 static struct option long_opt[] =
 {
@@ -47,6 +48,10 @@ main (int argc, char const *argv[])
   const char *user = "nobody";
 
   char *address = (char *)malloc (sizeof (char) * 16);
+
+  char *ip = (char *)malloc (sizeof (char) * 16);
+
+  int port = 0;
 
   char *chroot_dir = (char *)malloc (sizeof (char) * 16);
 
@@ -117,25 +122,33 @@ main (int argc, char const *argv[])
   if (standlone && !foreground)
     xdaemonize (verbose);
 
-  /**
-   * @brief permission test
-   *
-   */
-  FILE *f = fopen ("test.txt", "w+");
+  if (setaddress && parse_address (address, &ip, &port))
+    tftp_sock_init (ip, port);
 
-  if (f == NULL)
-    FAIL_MSG ("Access denied to parent directory\n", NULL);
+  if (tftp_conn == NULL)
+    FAIL_MSG ("Not initialized\n", NULL);
+
+  printf ("%s->%d\n", inet_ntoa (tftp_conn->addr.sin_addr),
+          ntohs (tftp_conn->addr.sin_port));
 
   while (1)
   {
-    fputs ("hello world\n", f);
+    int counter = 0;
 
-    fflush (f);
+    struct sockaddr_in caddr;
 
-    sleep (1);
+    socklen_t caddrLen = sizeof (caddr);
+
+    char buf[BUFSIZ];
+
+    while (counter <= 0)
+    {
+      counter = recvfrom (tftp_conn->fd, buf, BUFSIZ, 0, (struct sockaddr *)&caddr,
+                          &caddrLen);
+    }
+
+    printf ("msg: %s\n", buf);
   }
-
-  fclose (f);
 
   return EXIT_SUCCESS;
 }

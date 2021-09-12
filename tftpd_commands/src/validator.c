@@ -26,20 +26,9 @@ validate_address (char *addr)
 
   char *ip = (char *)malloc (sizeof (char) * 16);
 
-  char *tmp = (char *)malloc (sizeof (char) * 16);
+  int port;
 
-  char port;
-
-  strncpy(tmp, addr, strlen(addr));
-
-  ip = strtok (tmp, ":");
-
-  if ((tmp = strtok (NULL, ":")) != NULL)
-    port = atoi (tmp);
-  else
-    port = 69;
-
-  if (port > MAX_PORT_NUMBER || port < 1)
+  if (!parse_address (addr, &ip, &port))
     return false;
 
   tmpfd = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);

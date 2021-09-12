@@ -11,11 +11,11 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include "parse_address.h"
+
 
 #if !defined(VALIDATOR_H)
 #define VALIDATOR_H
-
-#define MAX_PORT_NUMBER   6553
 
 bool validate_dir_path_exists(char *path);
 
