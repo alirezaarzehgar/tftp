@@ -1,7 +1,5 @@
-#
 project(tftp_commands)
 
-#
 add_library(${PROJECT_NAME} 
     src/file.c
     src/malloc3d.c
