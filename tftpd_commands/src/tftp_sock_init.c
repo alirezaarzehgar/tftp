@@ -20,6 +20,9 @@ tftp_sock_init (char *ip, u_short port)
 
   tftp_conn = (struct tftp_connection *)malloc (sizeof (struct tftp_connection));
 
+  if (tftp_conn == NULL)
+    return false;
+
   tftp_conn->fd = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
   if (tftp_conn->fd == -1)
@@ -37,7 +40,7 @@ tftp_sock_init (char *ip, u_short port)
 
   retval = bind (tftp_conn->fd, (struct sockaddr *)&tftp_conn->addr,
                  tftp_conn->saddrLen);
-
+                 
   if (retval == -1)
     return false;
 
