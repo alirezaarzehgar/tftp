@@ -12,7 +12,7 @@
 #include "tftpd_commands/tftp_handle_wrq.h"
 
 void
-tftp_handle_wrq (char *buf)
+tftp_handle_wrq (char *buf, struct sockaddr_in clientAddress)
 {
     // TODO
 }

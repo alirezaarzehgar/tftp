@@ -62,11 +62,11 @@ tftp_listener (request_handler_t rrq_handler,
     opcode = ntohs (hdr->th_opcode);
 
     if (rrqSupport && opcode == RRQ)
-      rrq_handler (buf);
+      rrq_handler (buf, caddr);
     else if (wrqSupport && opcode == WRQ)
-      wrq_handler (buf);
+      wrq_handler (buf, caddr);
     else if (nakSupport)
-      nak_handler (buf);
+      nak_handler (buf, caddr);
     else
       fprintf (stderr, "Nothing to run!\n");
   }

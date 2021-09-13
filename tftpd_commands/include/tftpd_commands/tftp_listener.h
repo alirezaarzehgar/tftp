@@ -3,7 +3,7 @@
 #if !defined(TFTP_LISTENER_H)
 #define TFTP_LISTENER_H
 
-typedef void (*request_handler_t) (char *);
+typedef void (*request_handler_t) (char *, struct sockaddr_in);
 
 bool tftp_listener (request_handler_t rrq_handler,
                     request_handler_t wrq_handler,
