@@ -140,24 +140,7 @@ main (int argc, char const *argv[])
   printf ("%s->%d\n", inet_ntoa (tftp_conn->addr.sin_addr),
           ntohs (tftp_conn->addr.sin_port));
 
-  while (1)
-  {
-    int counter = 0;
-
-    struct sockaddr_in caddr;
-
-    socklen_t caddrLen = sizeof (tftp_conn->addr);
-
-    char buf[BUFSIZ];
-
-    while (counter <= 0)
-    {
-      counter = recvfrom (tftp_conn->fd, buf, BUFSIZ, 0, (struct sockaddr *)&caddr,
-                          &caddrLen);
-    }
-
-    printf ("msg: %s\n", buf);
-  }
+  tftp_listener(NULL, NULL);
 
   return EXIT_SUCCESS;
 }

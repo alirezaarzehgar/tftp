@@ -2,6 +2,7 @@ project(tftpd_commands)
 
 add_library(${PROJECT_NAME}
     src/validator.c
+    src/tftp_listener.c
     src/parse_address.c
     src/tftp_sock_init.c
 )

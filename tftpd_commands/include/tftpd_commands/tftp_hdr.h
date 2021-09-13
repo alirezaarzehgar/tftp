@@ -20,4 +20,6 @@ struct  tftphdr
   } __attribute__ ((__packed__)) th_u1;
 } __attribute__ ((__packed__));
 
+typedef struct tftphdr tftphdr_t;
+
 #endif // TFTP_HDR_H
