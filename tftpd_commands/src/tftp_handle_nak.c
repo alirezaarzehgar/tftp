@@ -12,7 +12,7 @@
 #include "tftpd_commands/tftp_handle_nak.h"
 
 void
-tftp_handle_nak (char *unused, struct sockaddr_in clientAddress)
+nak (struct sockaddr_in clientAddress)
 {
   tftphdr_t *hdr;
 
@@ -47,6 +47,12 @@ tftp_handle_nak (char *unused, struct sockaddr_in clientAddress)
   if (sendto (tftp_conn->fd, buf, len, 0, (struct sockaddr *)&clientAddress,
               sockLen) <= 0)
     perror ("Unable sending nak");
+}
+
+void
+tftp_handle_nak (char *unused, struct sockaddr_in clientAddress)
+{
+  nak (clientAddress);
 
   (void *)unused; /* Quit unused warning */
 }
