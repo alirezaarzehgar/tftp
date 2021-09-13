@@ -10,7 +10,6 @@
 #include "xvalidator.h"
 #include "tftpd_commands/tftp_sock_init.h"
 #include "tftpd_commands/shared_objects.h"
-#include "modernize/main.h"
 
 #if !defined(TFTPD_MAIN_H)
 #define TFTPD_MAIN_H
