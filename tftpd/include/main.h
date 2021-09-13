@@ -12,6 +12,10 @@
 #include "tftpd_commands/shared_objects.h"
 #include "tftpd_commands/tftp_listener.h"
 
+#include "tftpd_commands/tftp_handle_rrq.h"
+#include "tftpd_commands/tftp_handle_wrq.h"
+#include "tftpd_commands/tftp_handle_nak.h"
+
 #if !defined(TFTPD_MAIN_H)
 #define TFTPD_MAIN_H
 

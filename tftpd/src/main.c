@@ -140,7 +140,7 @@ main (int argc, char const *argv[])
   printf ("%s->%d\n", inet_ntoa (tftp_conn->addr.sin_addr),
           ntohs (tftp_conn->addr.sin_port));
 
-  tftp_listener(NULL, NULL);
+  tftp_listener (tftp_handle_rrq, tftp_handle_wrq, tftp_handle_nak);
 
   return EXIT_SUCCESS;
 }

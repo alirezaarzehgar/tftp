@@ -12,19 +12,25 @@
 #include "tftpd_commands/tftp_listener.h"
 
 bool
-tftp_listener (void (*rrq_handler)(), void (*wrq_handler)())
+tftp_listener (request_handler_t rrq_handler,
+               request_handler_t wrq_handler,
+               request_handler_t nak_handler)
 {
   bool rrqSupport = true;
 
   bool wrqSupport = true;
 
-  if (rrq_handler == NULL || wrq_handler == NULL)
+  bool nakSupport = true;
+
+  if (rrq_handler == NULL || wrq_handler == NULL || nak_handler == NULL)
   {
     fprintf (stderr, "request handlers do not exist\n");
 
     rrqSupport = rrq_handler != NULL;
 
     wrqSupport = wrq_handler != NULL;
+
+    nakSupport = nak_handler != NULL;
   }
 
   char buf[BUFSIZ];
@@ -56,16 +62,12 @@ tftp_listener (void (*rrq_handler)(), void (*wrq_handler)())
     opcode = ntohs (hdr->th_opcode);
 
     if (rrqSupport && opcode == RRQ)
-    {
-      // TODO
-    }
+      rrq_handler (buf);
     else if (wrqSupport && opcode == WRQ)
-    {
-      // TODO
-    }
+      wrq_handler (buf);
+    else if (nakSupport)
+      nak_handler (buf);
     else
-    {
-      // TODO
-    }
+      fprintf (stderr, "Nothing to run!\n");
   }
 }
