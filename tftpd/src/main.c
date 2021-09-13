@@ -10,7 +10,6 @@
  */
 
 #include "main.h"
-#include "tftpd_commands/shared_objects.h"
 
 static struct option long_opt[] =
 {
@@ -104,6 +103,19 @@ main (int argc, char const *argv[])
   }
   while (c != -1);
 
+  if (!setaddress)
+  {
+    xset_default_address (&address);
+    setaddress = true;
+  }
+
+  /**
+   * @brief binding addresses before changing root permission
+   *
+   */
+  if (setaddress && parse_address (address, &ip, &port))
+    xtftp_sock_init (ip, port);
+
   /**
    * @brief get passwd information before chroot and setuid
    * cause when we change root we haven't access to /etc/passwd.
@@ -122,9 +134,6 @@ main (int argc, char const *argv[])
   if (standlone && !foreground)
     xdaemonize (verbose);
 
-  if (setaddress && parse_address (address, &ip, &port))
-    tftp_sock_init (ip, port);
-
   if (tftp_conn == NULL)
     FAIL_MSG ("Not initialized\n", NULL);
 
@@ -137,7 +146,7 @@ main (int argc, char const *argv[])
 
     struct sockaddr_in caddr;
 
-    socklen_t caddrLen = sizeof (caddr);
+    socklen_t caddrLen = sizeof (tftp_conn->addr);
 
     char buf[BUFSIZ];
 

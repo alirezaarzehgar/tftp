@@ -9,6 +9,8 @@
 
 #include "xvalidator.h"
 #include "tftpd_commands/tftp_sock_init.h"
+#include "tftpd_commands/shared_objects.h"
+#include "modernize/main.h"
 
 #if !defined(TFTPD_MAIN_H)
 #define TFTPD_MAIN_H
@@ -40,6 +42,19 @@ xdaemonize (bool verbose)
 {
   if (daemon (1, verbose) != 0)
     FAIL_MSG ("Couldn't daemonize\n", NULL);
+}
+
+inline static void
+xtftp_sock_init (char *ip, int port)
+{
+  if (!tftp_sock_init (ip, port))
+    FAIL_MSG ("binding : %s\n", strerror (errno));
+}
+
+inline static void
+xset_default_address (char **address)
+{
+  strcpy (*address, "127.0.0.1:69");
 }
 
 #endif // TFTPD_MAIN_H
