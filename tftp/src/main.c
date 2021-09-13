@@ -197,7 +197,7 @@ main (int argc, char const *argv[])
 
     if (commandHolderLen > MAX_USER_CMD_LEN)
     {
-      fprintf (stderr, "command is too long\n");
+      fprintf (stderr, MSG_COMMAND_LONG);
 
       continue;
     }
