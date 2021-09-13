@@ -21,4 +21,6 @@ bool validate_dir_path_exists(char *path);
 
 bool validate_address(char *addr);
 
+bool have_read_access(char *filename);
+
 #endif // VALIDATOR_H

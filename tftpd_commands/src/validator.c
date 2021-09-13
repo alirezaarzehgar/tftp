@@ -44,3 +44,9 @@ validate_address (char *addr)
          && bind (tmpfd, (struct sockaddr *)&saddr, sizeof (saddr)) == 0
          && close (tmpfd) == 0;
 }
+
+bool
+have_read_access (char *filename)
+{
+  return access (filename, R_OK) == F_OK;
+}
