@@ -12,7 +12,7 @@
 #include "tftpd_commands/tftp_handle_nak.h"
 
 void
-nak (struct sockaddr_in clientAddress)
+nak (struct sockaddr_in clientAddress, int errorCode)
 {
   tftphdr_t *hdr;
 
@@ -26,19 +26,19 @@ nak (struct sockaddr_in clientAddress)
 
   hdr = (tftphdr_t *)&buf;
 
-  len = strlen (strerror (errno)) + 1;
+  len = strlen (strerror (errorCode)) + 1;
 
-  if (errno == 0)
+  if (errorCode == 0)
   {
     strcpy (msg, "Unknow request");
     len = 15;
   }
   else
-    strncpy (msg, strerror (errno), len);
+    strncpy (msg, strerror (errorCode), len);
 
   hdr->th_opcode = htons ((u_short)ERROR);
 
-  hdr->th_code = htons ((u_short)errno);
+  hdr->th_code = htons ((u_short)errorCode);
 
   memcpy (hdr->th_msg, msg, len);
 
@@ -52,7 +52,7 @@ nak (struct sockaddr_in clientAddress)
 void
 tftp_handle_nak (char *unused, struct sockaddr_in clientAddress)
 {
-  nak (clientAddress);
+  nak (clientAddress, errno);
 
   (void *)unused; /* Quit unused warning */
 }
