@@ -114,6 +114,12 @@ tftp_handle_wrq (char *buf, struct sockaddr_in clientAddress)
 
     size = write (fd, hdr->th_data, strlen (hdr->th_data));
 
+    /**
+     * @brief Fix unknow bug on this project cause
+     * htons(65535 + 1) is equal to zero!
+     *
+     * @param block
+     */
     if (user_block == 65535)
     {
       nak (clientAddress, EDOM);
