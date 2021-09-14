@@ -50,8 +50,6 @@ tftp_handle_rrq (char *buf, struct sockaddr_in clientAddress)
 
   if (!have_read_access (filename))
   {
-    errno = ENOENT;
-
     nak (clientAddress, ENOENT);
 
     goto abort;
