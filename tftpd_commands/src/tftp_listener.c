@@ -59,18 +59,15 @@ tftp_listener (request_handler_t rrq_handler,
                           &caddrLen);
     }
 
-    if (fork() == 0)
-    {
-      opcode = ntohs (hdr->th_opcode);
+    opcode = ntohs (hdr->th_opcode);
 
-      if (rrqSupport && opcode == RRQ)
-        rrq_handler (buf, caddr);
-      else if (wrqSupport && opcode == WRQ)
-        wrq_handler (buf, caddr);
-      else if (nakSupport)
-        nak_handler (buf, caddr);
-      else
-        fprintf (stderr, "Nothing to run!\n");
-    }
+    if (rrqSupport && opcode == RRQ)
+      rrq_handler (buf, caddr);
+    else if (wrqSupport && opcode == WRQ)
+      wrq_handler (buf, caddr);
+    else if (nakSupport)
+      nak_handler (buf, caddr);
+    else
+      fprintf (stderr, "Nothing to run!\n");
   }
 }

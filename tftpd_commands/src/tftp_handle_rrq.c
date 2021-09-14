@@ -24,23 +24,49 @@ tftp_handle_rrq (char *buf, struct sockaddr_in clientAddress)
 
   char fbuf[SEGMENT_SIZE];
 
+  char newbuf[PACKET_SIZE];
+
   char n;
 
   int block;
 
-  hdr = (tftphdr_t *)buf;
+  int user_opcode;
 
-  filename = hdr->th_stuff;
+  int user_block;
+
+  socklen_t len;
+
+  hdr = (tftphdr_t *)newbuf;
+
+  filename = ((tftphdr_t *)buf)->th_stuff;
 
   block = 1;
 
+  user_opcode = 0;
+
+  user_block = 0;
+
+  len = sizeof (clientAddress);
+
   if (!have_read_access (filename))
+  {
+    errno = ENOENT;
+
     nak (clientAddress, ENOENT);
+
+    goto abort;
+  }
 
   fd = open (filename, O_RDONLY);
 
   if (fd == -1)
+  {
     nak (clientAddress, errno);
+
+    goto abort;
+  }
+
+  int f = false;
 
   do
   {
@@ -50,16 +76,64 @@ tftp_handle_rrq (char *buf, struct sockaddr_in clientAddress)
     }
     while (size < 0);
 
-    /* TODO */
+    /* fill data */
+    hdr->th_opcode = htons (DATA);
 
-    n = sendto (tftp_conn->fd, buf, size, 0, (struct sockaddr *)&clientAddress,
+    memcpy (hdr->th_data, fbuf, size);
+
+    hdr->th_block = htons (block);
+
+    /* send data */
+    n = sendto (tftp_conn->fd, newbuf, size + 4, 0,
+                (struct sockaddr *)&clientAddress,
                 sizeof (clientAddress));
     if (n == -1)
+    {
       nak (clientAddress, errno);
-      
-    /* TODO */
+
+      goto abort;
+    }
+
+    do
+    {
+      n = recvfrom (tftp_conn->fd, buf, PACKET_SIZE, 0,
+                    (struct sockaddr *)&clientAddress,
+                    &len);
+
+      user_opcode = ntohs (hdr->th_opcode);
+
+      user_block = ntohs (hdr->th_block);
+    }
+    while (n <= 0 || user_opcode != DATA || user_block != block);
+
+    /**
+     * @brief Fix unknow bug on this project cause
+     * htons(65535 + 1) is equal to zero!
+     *
+     * @param block
+     */
+    if (f || block == 65535)
+    {
+      nak (clientAddress, EDOM);
+
+      goto abort;
+    }
+
+    block++;
+
+    bzero (newbuf, PACKET_SIZE);
   }
-  while (size == PACKET_SIZE);
+  while (size == SEGMENT_SIZE);
+
+abort:
 
   close (fd);
+
+  bzero (fbuf, strlen (fbuf));
+
+  bzero (filename, strlen (filename));
+
+  bzero (buf, PACKET_SIZE);
+
+  bzero (newbuf, PACKET_SIZE);
 }
