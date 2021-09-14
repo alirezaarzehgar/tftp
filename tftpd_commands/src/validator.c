@@ -48,5 +48,17 @@ validate_address (char *addr)
 bool
 have_read_access (char *filename)
 {
-  return access (filename, R_OK) == F_OK;
+  return access (filename, R_OK) == 0;
+}
+
+bool
+have_write_access (char *filename)
+{
+  return access (filename, W_OK) == 0;
+}
+
+bool
+have_write_access_current_dir()
+{
+  return (bool)!access (".", W_OK);
 }

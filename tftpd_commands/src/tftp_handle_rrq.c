@@ -64,8 +64,6 @@ tftp_handle_rrq (char *buf, struct sockaddr_in clientAddress)
     goto abort;
   }
 
-  int f = false;
-
   do
   {
     do
@@ -110,7 +108,7 @@ tftp_handle_rrq (char *buf, struct sockaddr_in clientAddress)
      *
      * @param block
      */
-    if (f || block == 65535)
+    if (user_block == 65535)
     {
       nak (clientAddress, EDOM);
 
